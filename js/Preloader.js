@@ -14,10 +14,13 @@ Preloader.prototype = {
     this.load.image('level1', 'res/gameback1.gif');
     this.load.image('level2', 'res/gameback2.gif');
     this.load.image('level3', 'res/gameback3.gif');
+    this.load.image('bomb', 'res/bomb.gif');
+
+    this.load.atlasJSONHash('dragon', 'res/dragon.png', 'res/dragon.json');
   },
 
   create: function() {
-    this.state.start('Menu') ;
+    this.state.start('Level') ;
   },
 
   update:function(){
