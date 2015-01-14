@@ -16,23 +16,27 @@ Level.prototype = {
 
   create: function() {
     this.add.image(0, 0, 'level' + this.level);
+
+
     this.dragon = this.add.sprite(200, 160, 'dragon');
-    this.dragon.anchor.setTo(0.5,0.5);
+    this.dragon.anchor.setTo(0.5, 0.5);
     this.dragon.animations.add('idle', [
       'dragon_06.gif',
       'dragon_07.gif',
     ], 8, true, false);
-    this.dragonFire = this.dragon.animations.add('fire', [
+    this.dragonFireAnimation = this.dragon.animations.add('fire', [
       'dragon_06.gif',
       'dragon_07.gif',
       'dragon_08.gif',
       'dragon_17.gif',
       'dragon_18.gif',
       'dragon_19.gif',
-    ], 8, true, false);
+    ], 10, true, false);
     this.dragon.animations.play('fire');
-    console.log(this.dragon);
-    this.dragonFire.onLoop.add(function() {
+    this.dragon.checkWorldBounds = true;
+    this.physics.enable(this.dragon, Phaser.Physics.ARCADE);
+
+    this.dragonFireAnimation.onLoop.add(function() {
 
       this.bomb = this.add.sprite(this.dragon.x,
         this.dragon.y, 'bomb');
@@ -49,9 +53,15 @@ Level.prototype = {
 
     }, this);
 
-
+    this.physics.startSystem(Phaser.Physics.ARCADE);
 
   },
 
-  update: function() {}
+  update: function() {
+    var pointer =  this.input.activePointer;
+    pointer.y = 160;
+    this.physics.arcade.moveToPointer(this.dragon, 60, this.input.activePointer, 500);
+
+
+  }
 };
