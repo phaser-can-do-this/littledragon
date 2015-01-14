@@ -15,8 +15,9 @@ Level.prototype = {
   preload: function() {},
 
   create: function() {
-    this.add.image(0, 0, 'level' + this.level);
+    this.physics.startSystem(Phaser.Physics.ARCADE);
 
+    this.add.image(0, 0, 'level' + this.level);
 
     this.dragon = this.add.sprite(200, 160, 'dragon');
     this.dragon.anchor.setTo(0.5, 0.5);
@@ -53,12 +54,15 @@ Level.prototype = {
 
     }, this);
 
-    this.physics.startSystem(Phaser.Physics.ARCADE);
 
   },
 
   update: function() {
     var pointer =  this.input.activePointer;
+    console.log(pointer);
+    if(pointer.x<0){
+      return ;
+    }
     pointer.y = 160;
     this.physics.arcade.moveToPointer(this.dragon, 60, this.input.activePointer, 500);
 
