@@ -20,7 +20,7 @@ Level.prototype = {
     this.add.image(0, 0, 'level' + this.level);
 
 
-    this.dragon = new Dragon(this.game,100,100);
+    this.dragon = new Dragon(this.game,this.world.centerX,160);
 
     this.add.existing(this.dragon);
 
