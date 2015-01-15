@@ -19,53 +19,36 @@ Level.prototype = {
 
     this.add.image(0, 0, 'level' + this.level);
 
-    this.dragon = this.add.sprite(200, 160, 'dragon');
-    this.dragon.anchor.setTo(0.5, 0.5);
-    this.dragon.animations.add('idle', [
-      'dragon_06.gif',
-      'dragon_07.gif',
-    ], 8, true, false);
-    this.dragonFireAnimation = this.dragon.animations.add('fire', [
-      'dragon_06.gif',
-      'dragon_07.gif',
-      'dragon_08.gif',
-      'dragon_17.gif',
-      'dragon_18.gif',
-      'dragon_19.gif',
-    ], 10, true, false);
-    this.dragon.animations.play('fire');
-    this.dragon.checkWorldBounds = true;
-    this.physics.enable(this.dragon, Phaser.Physics.ARCADE);
 
-    this.dragonFireAnimation.onLoop.add(function() {
+    this.dragon = new Dragon(this.game,100,100);
 
-      this.bomb = this.add.sprite(this.dragon.x,
-        this.dragon.y, 'bomb');
-      this.bomb.anchor.setTo(0.5);
-      this.physics.enable(this.bomb, Phaser.Physics.ARCADE);
-      this.bomb.body.velocity.y = 200;
-      this.bomb.scale.setTo(0.2);
-      this.add.tween(this.bomb.scale).to({
-        x: 1,
-        y: 1
-      }, 800, Phaser.Easing.Linear.None, true);
-      this.bomb.checkWorldBounds = true;
-      this.bomb.outOfBoundsKill = true;
+    this.add.existing(this.dragon);
 
-    }, this);
+    var monster= this.add.sprite(100, 100, 'monsters');
+    monster.animations.add('climb', [
+            0,1
+        ], 5, true, true);
+    monster.animations.add('run', [
+            3,4
+        ], 8, true, true);
+
+    monster.animations.play('run');
+    var bonus = this.add.sprite(200, 200, 'bonus');
+    bonus.animations.add('idle', [
+            0,1
+        ], 8, true, true);
+    bonus.animations.play('idle');
 
 
   },
 
   update: function() {
     var pointer =  this.input.activePointer;
-    console.log(pointer);
     if(pointer.x<0){
       return ;
     }
     pointer.y = 160;
     this.physics.arcade.moveToPointer(this.dragon, 60, this.input.activePointer, 500);
-
 
   }
 };
