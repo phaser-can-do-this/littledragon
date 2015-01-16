@@ -1,6 +1,6 @@
 'use strict';
 
-function Dragon(game, x, y) {
+function Dragon(game, x, y, bombs) {
   var self = this;
   Phaser.Sprite.call(this, game, x, y, 'dragon');
   this.anchor.setTo(0.5, 0.5);
@@ -21,21 +21,15 @@ function Dragon(game, x, y) {
   this.checkWorldBounds = true;
   this.game.physics.enable(this, Phaser.Physics.ARCADE);
 
-
   this.fireAnimation.onLoop.add(function() {
-    self.bomb = self.game.add.sprite(self.x,
-      self.y, 'bomb');
-    self.bomb.anchor.setTo(0.5);
-    self.game.physics.enable(self.bomb, Phaser.Physics.ARCADE);
-    self.bomb.body.velocity.y = 200;
-    self.bomb.scale.setTo(0.2);
-    self.game.add.tween(self.bomb.scale).to({
+    var bomb = bombs.getFirstDead();
+    bomb.reset(self.x, self.y, 1);
+    bomb.body.velocity.y = 200;
+    bomb.scale.setTo(0.2);
+    self.game.add.tween(bomb.scale).to({
       x: 1,
       y: 1
-    }, 800, Phaser.Easing.Linear.None, true);
-    self.bomb.checkWorldBounds = true;
-    self.bomb.outOfBoundsKill = true;
-
+    }, 1000, Phaser.Easing.Linear.None, true);
   }, this.game);
 }
 

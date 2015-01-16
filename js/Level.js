@@ -15,40 +15,73 @@ Level.prototype = {
   preload: function() {},
 
   create: function() {
+    var self = this;
     this.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.add.image(0, 0, 'level' + this.level);
 
 
-    this.dragon = new Dragon(this.game,this.world.centerX,160);
+    this.monsters = this.add.group();
+    for (var i = 0; i < 20; i++) {
+      var m = new Monster(this.game, 500, 500, i % 2 ? 'green' : 'red');
+      m.kill();
+      this.monsters.add(m);
+    }
 
+    this.bombs = this.add.group();
+    for (i = 0; i < 20; i++) {
+      var bomb = this.add.sprite(self.x,
+        self.y, 'bomb');
+      bomb.kill();
+      this.physics.enable(bomb, Phaser.Physics.ARCADE);
+      bomb.anchor.setTo(0.5);
+      bomb.body.velocity.y = 200;
+      bomb.scale.setTo(0.2);
+
+      bomb.checkWorldBounds = true;
+      bomb.outOfBoundsKill = true;
+
+      this.bombs.add(bomb);
+    }
+
+    this.dragon = new Dragon(this.game, this.world.centerX, 160, this.bombs);
     this.add.existing(this.dragon);
 
-    var monster= this.add.sprite(100, 100, 'monsters');
-    monster.animations.add('climb', [
-            0,1
-        ], 5, true, true);
-    monster.animations.add('run', [
-            3,4
-        ], 8, true, true);
+    self.monsters.getFirstDead().startClimb();
+    this.time.events.loop(
+      Phaser.Timer.SECOND * 1,
+      function() {
+        var monster = self.monsters.getFirstDead();
+        monster.startClimb();
+      }, this);
 
-    monster.animations.play('run');
     var bonus = this.add.sprite(200, 200, 'bonus');
-    bonus.animations.add('idle', [
-            0,1
-        ], 8, true, true);
+    bonus.animations.add(
+      'idle', [
+        0, 1
+      ], 8, true, true);
     bonus.animations.play('idle');
-
 
   },
 
   update: function() {
-    var pointer =  this.input.activePointer;
-    if(pointer.x<0){
-      return ;
+
+    this.physics.arcade.overlap(this.bombs, this.monsters,
+      function(bomb, monster) {
+        if (monster.hitAble) {
+          bomb.kill();
+          monster.die();
+        }
+      }, null, this);
+
+    var pointer = this.input.activePointer;
+    if (pointer.x < 0) {
+      return;
     }
     pointer.y = 160;
-    this.physics.arcade.moveToPointer(this.dragon, 60, this.input.activePointer, 500);
+    this.physics.arcade.moveToPointer(this.dragon, 60,
+      this.input.activePointer, 500);
 
   }
+
 };
