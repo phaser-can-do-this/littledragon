@@ -14,40 +14,41 @@ Level.prototype = {
 
   preload: function() {},
 
-  create: function() {
-    var self = this;
-    this.physics.startSystem(Phaser.Physics.ARCADE);
-
-    this.add.image(0, 0, 'level' + this.level);
-
+  createBar: function() {
     this.bar = this.add.sprite(0, 175);
     this.physics.enable(this.bar, Phaser.Physics.ARCADE);
     this.bar.width = this.world.width;
     this.bar.height = 2;
     this.bar.body.immovable = true;
 
+  },
 
+  createMonsters: function() {
     this.monsters = this.add.group();
     for (var i = 0; i < 20; i++) {
       var m = new Monster(this.game, 500, 500, i % 2 ? 'green' : 'red');
       m.kill();
       this.monsters.add(m);
     }
+  },
+
+  createBonus: function() {
 
     this.bonus = this.add.group();
     var styles = ['gold', 'diamond', 'ring'];
-    for (i = 0; i < 30; i++) {
+    for (var i = 0; i < 30; i++) {
       var index = this.rnd.integerInRange(0, 2);
       var b = new Bonus(this.game, this.rnd.integerInRange(0, 480), 0,
         styles[index]);
       b.kill();
       this.bonus.add(b);
     }
+  },
 
+  createBombs: function() {
     this.bombs = this.add.group();
-    for (i = 0; i < 20; i++) {
-      var bomb = this.add.sprite(self.x,
-        self.y, 'bomb');
+    for (var i = 0; i < 20; i++) {
+      var bomb = this.add.sprite(0, 0, 'bomb');
       bomb.kill();
       this.physics.enable(bomb, Phaser.Physics.ARCADE);
       bomb.anchor.setTo(0.5);
@@ -60,6 +61,22 @@ Level.prototype = {
       this.bombs.add(bomb);
     }
 
+  },
+
+  create: function() {
+    var self = this;
+    this.physics.startSystem(Phaser.Physics.ARCADE);
+
+    this.add.image(0, 0, 'level' + this.level);
+
+    this.createBar();
+
+    this.createMonsters();
+
+    this.createBonus();
+
+    this.createBombs();
+
     this.dragon = new Dragon(this.game, this.world.centerX, 160, this.bombs);
     this.add.existing(this.dragon);
 
@@ -71,35 +88,27 @@ Level.prototype = {
         monster.startClimb();
       }, this);
 
-
     this.time.events.loop(
-      Phaser.Timer.SECOND*2 ,
+      Phaser.Timer.SECOND * 2,
       function() {
-        //body
-        if(this.rnd.integerInRange(0,1)===1){
-
+        if (this.rnd.integerInRange(0, 1) === 1) {
           var num = this.rnd.integerInRange(1, 4);
           var x = this.rnd.integerInRange(10, 280);
-          console.log('bonsu',num,x);
-          for(var i=0;i<num;i++){
+          for (var i = 0; i < num; i++) {
             var b = self.bonus.getFirstDead();
-            b.reset(x,0,1);
+            b.reset(x, 0, 1);
             b.restart();
             x += 16;
           }
         }
-       }, this);
-
-
-
+      }, this);
   },
 
   update: function() {
 
     this.physics.arcade.collide(this.bonus, this.bar);
-
-    this.physics.arcade.collide(this.dragon,this.bonus,
-      function(dragon,bonus) {
+    this.physics.arcade.collide(this.dragon, this.bonus,
+      function(dragon, bonus) {
         bonus.die();
       }, null, this);
 
@@ -118,8 +127,5 @@ Level.prototype = {
     pointer.y = 160;
     this.physics.arcade.moveToPointer(this.dragon, 60,
       this.input.activePointer, 500);
-
   }
-
-
 };

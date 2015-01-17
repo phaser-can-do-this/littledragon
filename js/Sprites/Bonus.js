@@ -44,5 +44,5 @@ Bonus.prototype.restart = function() {
 
 Bonus.prototype.die = function() {
   this.kill();
-  self.timeID&&clearTimeout(self.timeID);
+  this.timeID&&clearTimeout(this.timeID);
 };
