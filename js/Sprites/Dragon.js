@@ -21,6 +21,8 @@ function Dragon(game, x, y, bombs) {
   this.checkWorldBounds = true;
   this.game.physics.enable(this, Phaser.Physics.ARCADE);
 
+  this.body.immovable= true;
+
   this.fireAnimation.onLoop.add(function() {
     var bomb = bombs.getFirstDead();
     bomb.reset(self.x, self.y, 1);

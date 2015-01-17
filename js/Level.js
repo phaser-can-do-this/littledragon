@@ -4,7 +4,6 @@ var Level = function(game) {
 
 };
 
-var bonus;
 Level.prototype = {
   init: function(config) {
     console.log('init ', config);
@@ -20,7 +19,6 @@ Level.prototype = {
     this.physics.startSystem(Phaser.Physics.ARCADE);
 
     this.add.image(0, 0, 'level' + this.level);
-
 
     this.bar = this.add.sprite(0, 175);
     this.physics.enable(this.bar, Phaser.Physics.ARCADE);
@@ -42,6 +40,7 @@ Level.prototype = {
       var index = this.rnd.integerInRange(0, 2);
       var b = new Bonus(this.game, this.rnd.integerInRange(0, 480), 0,
         styles[index]);
+      b.kill();
       this.bonus.add(b);
     }
 
@@ -73,11 +72,37 @@ Level.prototype = {
       }, this);
 
 
+    this.time.events.loop(
+      Phaser.Timer.SECOND*2 ,
+      function() {
+        //body
+        if(this.rnd.integerInRange(0,1)===1){
+
+          var num = this.rnd.integerInRange(1, 4);
+          var x = this.rnd.integerInRange(10, 280);
+          console.log('bonsu',num,x);
+          for(var i=0;i<num;i++){
+            var b = self.bonus.getFirstDead();
+            b.reset(x,0,1);
+            b.restart();
+            x += 16;
+          }
+        }
+       }, this);
+
+
+
   },
 
   update: function() {
 
     this.physics.arcade.collide(this.bonus, this.bar);
+
+    this.physics.arcade.collide(this.dragon,this.bonus,
+      function(dragon,bonus) {
+        bonus.die();
+      }, null, this);
+
     this.physics.arcade.overlap(this.bombs, this.monsters,
       function(bomb, monster) {
         if (monster.hitAble) {
@@ -95,5 +120,6 @@ Level.prototype = {
       this.input.activePointer, 500);
 
   }
+
 
 };
