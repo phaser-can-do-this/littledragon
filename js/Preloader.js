@@ -16,7 +16,7 @@ Preloader.prototype = {
     this.load.image('level3', 'res/gameback3.gif');
     this.load.image('bomb', 'res/bomb.gif');
     this.load.spritesheet('monsters','res/monstersheet.gif', 32, 32);
-    this.load.spritesheet('bonus','res/bonussheet.gif', 16, 16);
+    this.load.spritesheet('bonus',' res/bonussheet.gif', 16, 16);
     this.load.atlasJSONHash('dragon', 'res/dragon.png', 'res/dragon.json');
   },
 

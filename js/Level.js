@@ -4,6 +4,7 @@ var Level = function(game) {
 
 };
 
+var bonus;
 Level.prototype = {
   init: function(config) {
     console.log('init ', config);
@@ -21,11 +22,27 @@ Level.prototype = {
     this.add.image(0, 0, 'level' + this.level);
 
 
+    this.bar = this.add.sprite(0, 175);
+    this.physics.enable(this.bar, Phaser.Physics.ARCADE);
+    this.bar.width = this.world.width;
+    this.bar.height = 2;
+    this.bar.body.immovable = true;
+
+
     this.monsters = this.add.group();
     for (var i = 0; i < 20; i++) {
       var m = new Monster(this.game, 500, 500, i % 2 ? 'green' : 'red');
       m.kill();
       this.monsters.add(m);
+    }
+
+    this.bonus = this.add.group();
+    var styles = ['gold', 'diamond', 'ring'];
+    for (i = 0; i < 30; i++) {
+      var index = this.rnd.integerInRange(0, 2);
+      var b = new Bonus(this.game, this.rnd.integerInRange(0, 480), 0,
+        styles[index]);
+      this.bonus.add(b);
     }
 
     this.bombs = this.add.group();
@@ -55,17 +72,12 @@ Level.prototype = {
         monster.startClimb();
       }, this);
 
-    var bonus = this.add.sprite(200, 200, 'bonus');
-    bonus.animations.add(
-      'idle', [
-        0, 1
-      ], 8, true, true);
-    bonus.animations.play('idle');
 
   },
 
   update: function() {
 
+    this.physics.arcade.collide(this.bonus, this.bar);
     this.physics.arcade.overlap(this.bombs, this.monsters,
       function(bomb, monster) {
         if (monster.hitAble) {
